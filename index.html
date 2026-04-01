@@ -546,6 +546,18 @@
             border: 0;
         }
         
+        /* PayPal フォームを詳細ページでも見やすく */
+        .paypal-container {
+            margin-top: 30px;
+            text-align: center;
+            padding: 15px 0;
+            border-top: 1px solid rgba(246,185,59,0.3);
+        }
+        
+        body.light-mode .paypal-container {
+            border-top-color: #d1d9e6;
+        }
+        
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -678,14 +690,15 @@
                 </a>
             </div>
 
-<div>
-  <style>.pp-ZLNXCQFNL2RYE{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
-  <form action="https://www.paypal.com/ncp/payment/ZLNXCQFNL2RYE" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
-    <input class="pp-ZLNXCQFNL2RYE" type="submit" value="Pay for this app" />
-    <img src=https://www.paypalobjects.com/images/Debit_Credit_APM.svg alt="cards" />
-    <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
-  </form>
-</div>
+            <!-- PayPal フォーム (リストビュー内・上部スポンサーとマップの間) -->
+            <div>
+                <style>.pp-ZLNXCQFNL2RYE{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
+                <form action="https://www.paypal.com/ncp/payment/ZLNXCQFNL2RYE" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+                    <input class="pp-ZLNXCQFNL2RYE" type="submit" value="Pay for this app" />
+                    <img src=https://www.paypalobjects.com/images/Debit_Credit_APM.svg alt="cards" />
+                    <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
+                </form>
+            </div>
 
             <!-- Google Map (中心: タイムズスクエア) 上部スポンサーと自由の女神の間 -->
             <div class="map-container">
@@ -892,12 +905,10 @@
                     airportTransport: "AirTrain a Jamaica Station → Tren E a World Trade Center → Ferry desde Battery Park",
                     cityTransport: "Metro: 1 a South Ferry, 4/5 a Bowling Green. Ferry Statue Cruises desde Battery Park.",
                     officialUrl: "https://www.nps.gov/stli"
-                },
-                // 他のスペイン語データは省略（元データと同様）維持するが、長さ制限のため省略しつつ動作保証のため簡略化（実際は全12件同様に存在）
-                // 実際の完全なデータは英語と同様の構造で存在するものとする（ここでは動作確認のために最小限維持）
+                }
             ]
         };
-        // スペインデータを英語からコピーして簡易補完（実際には上記に全件定義すべきだが表示に支障ないよう補填）
+        // スペインデータを英語から簡易補完 (実際には完全なデータが必要だが表示に支障ないよう補填)
         if (!attractionsData.es || attractionsData.es.length < 12) {
             attractionsData.es = attractionsData.en.map(item => ({
                 ...item,
@@ -995,6 +1006,20 @@
             });
         }
 
+        // PayPal フォームのHTML（共通）
+        function getPaypalFormHTML() {
+            return `
+                <div class="paypal-container">
+                    <style>.pp-ZLNXCQFNL2RYE{text-align:center;border:none;border-radius:0.25rem;min-width:11.625rem;padding:0 2rem;height:2.625rem;font-weight:bold;background-color:#FFD140;color:#000000;font-family:"Helvetica Neue",Arial,sans-serif;font-size:1rem;line-height:1.25rem;cursor:pointer;}</style>
+                    <form action="https://www.paypal.com/ncp/payment/ZLNXCQFNL2RYE" method="post" target="_blank" style="display:inline-grid;justify-items:center;align-content:start;gap:0.5rem;">
+                        <input class="pp-ZLNXCQFNL2RYE" type="submit" value="Pay for this app" />
+                        <img src="https://www.paypalobjects.com/images/Debit_Credit_APM.svg" alt="cards" />
+                        <section style="font-size: 0.75rem;"> Powered by <img src="https://www.paypalobjects.com/paypal-ui/logos/svg/paypal-wordmark-color.svg" alt="paypal" style="height:0.875rem;vertical-align:middle;"/></section>
+                    </form>
+                </div>
+            `;
+        }
+
         function showDetail(spotId) {
             currentSpotId = spotId;
             const spot = attractionsData[currentLang].find(s => s.id === spotId);
@@ -1029,6 +1054,12 @@
                 <a href="${spot.officialUrl}" class="official-link" target="_blank" rel="noopener">${officialLinkText[currentLang]}</a>
             `;
             detailContent.appendChild(textDiv);
+            
+            // 詳細ページにも PayPal フォームを追加
+            const paypalDiv = document.createElement('div');
+            paypalDiv.innerHTML = getPaypalFormHTML();
+            detailContent.appendChild(paypalDiv);
+            
             listView.classList.add('hidden');
             detailView.classList.remove('hidden');
             backButtonContainer.style.display = 'flex';
@@ -1081,7 +1112,6 @@
             if (BOTTOM_SPONSOR_LINK_URL && BOTTOM_SPONSOR_LINK_URL.trim() !== "") {
                 bottomLink.href = BOTTOM_SPONSOR_LINK_URL;
             }
-            // 画像エラーハンドリング
             topImg.onerror = () => { if (!TOP_SPONSOR_IMAGE_URL) topImg.style.display = 'block'; };
             bottomImg.onerror = () => { if (!BOTTOM_SPONSOR_IMAGE_URL) bottomImg.style.display = 'block'; };
         }
