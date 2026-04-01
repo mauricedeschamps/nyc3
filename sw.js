@@ -98,7 +98,7 @@ self.addEventListener('fetch', event => {
           })
           .catch(() => {
             // オフライン時はフォールバック画像を表示
-            return caches.match('/IMG_20250721_192101_(192_x_192_ピクセル).jpg');
+            return caches.match('icons/icon-192.jpg');
           });
       })
     );
@@ -133,8 +133,8 @@ self.addEventListener('fetch', event => {
 self.addEventListener('push', event => {
   const options = {
     body: event.data.text(),
-    icon: 'IMG_20250721_192101_(192_x_192_ピクセル).jpg',
-    badge: 'IMG_20250721_192101_(192_x_192_ピクセル).jpg',
+    icon: 'icons/icon-192.jpg',
+    badge: 'icons/icon-192.jpg',
     vibrate: [200, 100, 200],
     data: {
       url: '/'
